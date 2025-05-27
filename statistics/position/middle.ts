@@ -33,5 +33,6 @@ export const middlePositionPipeline = () => Effect.gen(function* () {
     soloKills: playerInMatch.challenges.soloKills,
     'k@14': goldDifference,
     kda: playerInMatch.challenges.kda,
+    __tag: 'MiddlePositionalStatistics' as const,
   };
 })

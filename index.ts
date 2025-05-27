@@ -5,6 +5,7 @@ import { RiotApiImpl } from "./riot-api/adapter/riot-api";
 import { RiotApi } from "./riot-api/domain/port/riot-api";
 import { StatisticsParamsState } from "./statistics/statistics-params";
 import { meanObject } from "./statistics/operations/mean-object";
+import { generateImgForPositionMiddle } from "./image-generator/generate-img-for-position-middle";
 
 const pipelines = {
   'game-mode/rift': riftPipeline,
@@ -23,7 +24,7 @@ interface GetStatsForAccountParams {
 }
 
 const getStatsForAccount = (params: GetStatsForAccountParams) => Effect.Do.pipe(
-  Effect.flatMap(() => makeStatisticsParamsStates(params.name, params.tag)),
+  Effect.flatMap(() => makeStatisticsParamsStates(params)),
   Effect.andThen((allStatisticsParams) =>
     Effect.forEach(allStatisticsParams, (statisticsParams) => Effect.Do.pipe(
       Effect.andThen(params.pipelines.includes('game-mode/rift') ? pipelines['game-mode/rift']() : Effect.succeed(undefined)),
@@ -41,10 +42,10 @@ const getStatsForAccount = (params: GetStatsForAccountParams) => Effect.Do.pipe(
   })),
 )
 
-const makeStatisticsParamsStates = (name: string, tag: string) => Effect.gen(function* () {
+const makeStatisticsParamsStates = (params: GetStatsForAccountParams) => Effect.gen(function* () {
   const riotApi = yield* RiotApi;
 
-  const account = yield* riotApi.Account(tag, name);
+  const account = yield* riotApi.Account(params.tag, params.name);
   const player = yield* account.getPlayer();
   const matches = yield* player.getMatches();
 
@@ -52,13 +53,31 @@ const makeStatisticsParamsStates = (name: string, tag: string) => Effect.gen(fun
 })
 
 async function main() {
-  const results = await Effect.runPromise(getStatsForAccount({
-    name: "Capsismyfather",
-    tag: "CAPS",
-    pipelines: ['game-mode/rift', 'position/middle'],
-    operations: ['mean']
-  }));
-  console.log("Results:", results);
+  // const results = await Effect.runPromise(getStatsForAccount({
+  //   name: "Capsismyfather",
+  //   tag: "CAPS",
+  //   pipelines: ['game-mode/rift', 'position/middle'],
+  //   operations: ['mean']
+  // }));
+
+  const results = {
+    "kp": 0.601648,
+    "dmg": 0.269532,
+    "soloKills": 1.333333,
+    "k@14": -179.166667,
+    "kda": 3.636742,
+    "__tag": "MiddlePositionalStatistics" as const,
+  }
+
+  if ('__tag' in results) {
+    let statsFilePromise: Promise<Buffer>;
+    switch (results.__tag) {
+      case 'MiddlePositionalStatistics': { statsFilePromise = generateImgForPositionMiddle(results); break; }
+    }
+
+    const statsFile = await statsFilePromise;
+    await Bun.write("middle-stats.png", statsFile);
+  }
 }
 
 main();
