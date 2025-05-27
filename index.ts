@@ -6,6 +6,7 @@ import { RiotApi } from "./riot-api/domain/port/riot-api";
 import { StatisticsParamsState } from "./statistics/statistics-params";
 import { meanObject } from "./statistics/operations/mean-object";
 import { generateImgForPositionMiddle } from "./image-generator/generate-img-for-position-middle";
+import { getPaletteColor, paletteColors } from "./image-generator/palette-colors";
 
 const pipelines = {
   'game-mode/rift': riftPipeline,
@@ -21,6 +22,7 @@ interface GetStatsForAccountParams {
   tag: string;
   pipelines: (keyof typeof pipelines)[];
   operations: (keyof typeof operations)[];
+  paletteColor: number;
 }
 
 const getStatsForAccount = (params: GetStatsForAccountParams) => Effect.Do.pipe(
@@ -35,7 +37,7 @@ const getStatsForAccount = (params: GetStatsForAccountParams) => Effect.Do.pipe(
   ),
   Effect.andThen((results) => results.filter((result) => result !== undefined)),
   Effect.andThen((results) =>
-    params.operations.includes('mean') ? operations['mean'](results, ['dmg', 'k@14', 'kda', 'kp', 'soloKills']) : results),
+    params.operations.includes('mean') ? operations['mean'](results, ['dmg', 'g@14', 'kda', 'kp', 'soloKills']) : results),
   Effect.provideService(RiotApi, RiotApiImpl({
     regions: ["europe", "euw1"],
     apiKey: process.env.RIOT_API_KEY!
@@ -53,26 +55,33 @@ const makeStatisticsParamsStates = (params: GetStatsForAccountParams) => Effect.
 })
 
 async function main() {
-  // const results = await Effect.runPromise(getStatsForAccount({
-  //   name: "Capsismyfather",
-  //   tag: "CAPS",
-  //   pipelines: ['game-mode/rift', 'position/middle'],
-  //   operations: ['mean']
-  // }));
+  const params: GetStatsForAccountParams = {
+    name: "Capsismyfather",
+    tag: "CAPS",
+    pipelines: ['game-mode/rift', 'position/middle'],
+    operations: ['mean'],
+    paletteColor: 0,
+  }
 
   const results = {
     "kp": 0.601648,
     "dmg": 0.269532,
     "soloKills": 1.333333,
-    "k@14": -179.166667,
+    "g@14": -179.166667,
     "kda": 3.636742,
     "__tag": "MiddlePositionalStatistics" as const,
   }
 
   if ('__tag' in results) {
     let statsFilePromise: Promise<Buffer>;
+    const style = {
+      colors: getPaletteColor(params.paletteColor)
+    };
     switch (results.__tag) {
-      case 'MiddlePositionalStatistics': { statsFilePromise = generateImgForPositionMiddle(results); break; }
+      case 'MiddlePositionalStatistics': {
+        statsFilePromise = generateImgForPositionMiddle(results, style);
+        break;
+      }
     }
 
     const statsFile = await statsFilePromise;

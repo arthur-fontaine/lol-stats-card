@@ -31,7 +31,7 @@ export const middlePositionPipeline = () => Effect.gen(function* () {
     kp: playerInMatch.challenges.killParticipation,
     dmg: playerInMatch.challenges.teamDamagePercentage,
     soloKills: playerInMatch.challenges.soloKills,
-    'k@14': goldDifference,
+    'g@14': goldDifference,
     kda: playerInMatch.challenges.kda,
     __tag: 'MiddlePositionalStatistics' as const,
   };
