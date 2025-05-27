@@ -4,16 +4,22 @@ import { middlePositionPipeline } from "./statistics/position/middle";
 import { RiotApiImpl } from "./riot-api/adapter/riot-api";
 import { RiotApi } from "./riot-api/domain/port/riot-api";
 import { StatisticsParamsState } from "./statistics/statistics-params";
+import { meanObject } from "./statistics/operations/mean-object";
 
 const pipelines = {
   'game-mode/rift': riftPipeline,
   'position/middle': middlePositionPipeline,
 } as const;
 
+const operations = {
+  'mean': meanObject,
+} as const;
+
 interface GetStatsForAccountParams {
   name: string;
   tag: string;
   pipelines: (keyof typeof pipelines)[];
+  operations: (keyof typeof operations)[];
 }
 
 const getStatsForAccount = (params: GetStatsForAccountParams) => Effect.Do.pipe(
@@ -27,6 +33,8 @@ const getStatsForAccount = (params: GetStatsForAccountParams) => Effect.Do.pipe(
     ))
   ),
   Effect.andThen((results) => results.filter((result) => result !== undefined)),
+  Effect.andThen((results) =>
+    params.operations.includes('mean') ? operations['mean'](results, ['dmg', 'k@14', 'kda', 'kp', 'soloKills']) : results),
   Effect.provideService(RiotApi, RiotApiImpl({
     regions: ["europe", "euw1"],
     apiKey: process.env.RIOT_API_KEY!
@@ -47,7 +55,8 @@ async function main() {
   const results = await Effect.runPromise(getStatsForAccount({
     name: "Capsismyfather",
     tag: "CAPS",
-    pipelines: ['game-mode/rift', 'position/middle']
+    pipelines: ['game-mode/rift', 'position/middle'],
+    operations: ['mean']
   }));
   console.log("Results:", results);
 }
