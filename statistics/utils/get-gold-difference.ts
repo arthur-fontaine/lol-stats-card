@@ -1,8 +1,11 @@
-import type { RiotApi } from "../../riot-api/riot-api";
+import type { RiotMatchGetDetailsResponse } from "../../riot-api/domain/model/schemas/match/get-match-details";
+import type { RiotMatchGetTimelineResponse } from "../../riot-api/domain/model/schemas/match/get-timeline";
 
-type MatchDetails = Awaited<ReturnType<InstanceType<typeof RiotApi['Match']>['getDetails']>>;
-type Frame = Awaited<ReturnType<InstanceType<typeof RiotApi['Match']>['getTimeline']>>['info']['frames'][number];
-export function getGoldDifference(matchDetails: MatchDetails, frame: Frame, participantId: number): number {
+export function getGoldDifference(
+  matchDetails: typeof RiotMatchGetDetailsResponse.Type,
+  frame: typeof RiotMatchGetTimelineResponse.Type['info']['frames'][number],
+  participantId: number,
+): number {
   const participantFrame = frame.participantFrames[participantId];
   if (!participantFrame) throw new Error(`Participant frame not found for participantId: ${participantId}`);
 
