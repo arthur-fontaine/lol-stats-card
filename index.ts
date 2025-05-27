@@ -5,12 +5,23 @@ import { RiotApiImpl } from "./riot-api/adapter/riot-api";
 import { RiotApi } from "./riot-api/domain/port/riot-api";
 import { StatisticsParamsState } from "./statistics/statistics-params";
 
-const getStatsForAccount = (name: string, tag: string) => Effect.Do.pipe(
-  Effect.flatMap(() => makeStatisticsParamsStates(name, tag)),
+const pipelines = {
+  'game-mode/rift': riftPipeline,
+  'position/middle': middlePositionPipeline,
+} as const;
+
+interface GetStatsForAccountParams {
+  name: string;
+  tag: string;
+  pipelines: (keyof typeof pipelines)[];
+}
+
+const getStatsForAccount = (params: GetStatsForAccountParams) => Effect.Do.pipe(
+  Effect.flatMap(() => makeStatisticsParamsStates(params.name, params.tag)),
   Effect.andThen((allStatisticsParams) =>
     Effect.forEach(allStatisticsParams, (statisticsParams) => Effect.Do.pipe(
-      Effect.andThen(riftPipeline),
-      Effect.andThen(middlePositionPipeline),
+      Effect.andThen(params.pipelines.includes('game-mode/rift') ? pipelines['game-mode/rift']() : Effect.succeed(undefined)),
+      Effect.andThen(params.pipelines.includes('position/middle') ? pipelines['position/middle']() : Effect.succeed(undefined)),
       Effect.catchTag("Skip", () => Effect.succeed(undefined)),
       Effect.provideServiceEffect(StatisticsParamsState, Ref.make(statisticsParams))
     ))
@@ -33,7 +44,11 @@ const makeStatisticsParamsStates = (name: string, tag: string) => Effect.gen(fun
 })
 
 async function main() {
-  const results = await Effect.runPromise(getStatsForAccount("Capsismyfather", "CAPS"));
+  const results = await Effect.runPromise(getStatsForAccount({
+    name: "Capsismyfather",
+    tag: "CAPS",
+    pipelines: ['game-mode/rift', 'position/middle']
+  }));
   console.log("Results:", results);
 }
 
