@@ -22,6 +22,7 @@ export const RiotMatchGetDetailsResponse = Schema.Struct({
         soloKills: Schema.Number,
         teamDamagePercentage: Schema.Number,
       }),
+      win: Schema.Boolean,
     })),
   }),
 });

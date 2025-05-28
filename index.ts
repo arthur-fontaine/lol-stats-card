@@ -7,6 +7,7 @@ import { StatisticsParamsState } from "./statistics/statistics-params";
 import { meanObject } from "./statistics/operations/mean-object";
 import { generateImgForPositionMiddle } from "./image-generator/generate-img-for-position-middle";
 import { getPaletteColor } from "./image-generator/palette-colors";
+import { sumObject } from "./statistics/operations/sum-object";
 
 const pipelines = {
   'game-mode/rift': riftPipeline,
@@ -15,6 +16,7 @@ const pipelines = {
 
 const operations = {
   'mean': meanObject,
+  'sum': sumObject,
 } as const;
 
 interface GetStatsForAccountParams {
@@ -61,6 +63,7 @@ async function main() {
     pipelines: ['game-mode/rift', 'position/middle'],
     operations: {
       mean: ['kp', 'dmg', 'soloKills', 'g@14', 'kda'],
+      sum: ['win', 'loss'],
     },
     paletteColor: 0,
   }
@@ -68,7 +71,7 @@ async function main() {
   const results = await getStatsForAccount(params).pipe(Effect.runPromise);
 
   if (!params.operations || Object.keys(params.operations).length === 0) return results;
-  
+
   const [firstResult] = results;
   if (!firstResult) return results;
 
@@ -81,14 +84,27 @@ async function main() {
     }
   }
 
+  // const result = {
+  //   kp: 0.5833333333333334,
+  //   dmg: 0.27736517588395043,
+  //   soloKills: 10,
+  //   "g@14": 253,
+  //   kda: 3.5,
+  //   win: 5,
+  //   loss: 7,
+  //   __tag: "MiddlePositionalStatistics",
+  // } as const;
+
   const statsFile = await (
     result.__tag === 'MiddlePositionalStatistics' ? generateImgForPositionMiddle(result, { colors: getPaletteColor(params.paletteColor) }) :
-    Promise.resolve()
+      Promise.resolve()
   )
 
   if (statsFile) {
     await Bun.write("stats.png", statsFile);
   }
+
+  return result;
 }
 
-main();
+console.log(await main());

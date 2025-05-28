@@ -26,6 +26,9 @@ export const middlePositionPipeline = () => Effect.gen(function* () {
 
   const goldDifference = yield* Effect.try(() =>
     getGoldDifference(matchDetails, frameAt14, playerInMatch.participantId));
+  
+  const isWin = yield* Effect.try(() =>
+    matchDetails.info.participants.some(p => p.puuid === account.puuid && p.win))
 
   return {
     kp: playerInMatch.challenges.killParticipation,
@@ -33,6 +36,8 @@ export const middlePositionPipeline = () => Effect.gen(function* () {
     soloKills: playerInMatch.challenges.soloKills,
     'g@14': goldDifference,
     kda: playerInMatch.challenges.kda,
+    win: isWin ? 1 : 0,
+    loss: isWin ? 0 : 1,
     __tag: 'MiddlePositionalStatistics' as const,
   };
 })

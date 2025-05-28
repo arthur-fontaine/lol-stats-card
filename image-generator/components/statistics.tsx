@@ -1,9 +1,13 @@
 import type { PaletteColor } from "../palette-colors";
 
-export const Statistics = ({ style, smallData, bigData, player }: {
+export const Statistics = ({ style, smallData, bigData, player, results }: {
   style: { colors: PaletteColor }
   smallData: Record<string, string>
   bigData: Record<string, string>,
+  results: {
+    wins: number;
+    losses: number;
+  },
   player: {
     imageBase64: string;
     name: string;
@@ -57,16 +61,68 @@ export const Statistics = ({ style, smallData, bigData, player }: {
             height: 'auto',
             objectFit: 'cover',
           }} />
+
+          <span style={{
+            backgroundColor: style.colors.backgroundSecondary,
+            color: style.colors.text,
+            padding: '1rem',
+            position: 'absolute',
+            bottom: '2rem',
+            left: '2rem',
+            fontSize: '60px',
+            textTransform: 'uppercase',
+          }}>
+            {player.name}
+          </span>
         </div>
 
       </div>
 
+      {/* big data */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', fontSize: '300px', fontWeight: 'bold', }}>
         <span>{Object.values(bigData)[0]}</span>
         <span style={{
           textTransform: 'uppercase',
           color: style.colors.accent,
         }}>{Object.keys(bigData)[0]?.toUpperCase()}</span>
+      </div>
+
+      {/* footer */}
+      <div style={{
+        display: 'flex',
+        gap: '1rem',
+        backgroundColor: style.colors.backgroundSecondary,
+        flex: 1,
+      }}>
+
+        {/* win/loss */}
+        <div style={{
+          display: 'flex',
+          flex: 1,
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: style.colors.win,
+            color: 'white',
+            flex: results.wins
+          }}>
+            <span style={{ fontSize: '200px', fontWeight: 'bold' }}>{results.wins}</span>
+          </div>
+
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: style.colors.loss,
+            color: 'white',
+            flex: results.losses
+          }}>
+            <span style={{ fontSize: '200px', fontWeight: 'bold' }}>{results.losses}</span>
+          </div>
+        </div>
+
       </div>
     </div>
   );

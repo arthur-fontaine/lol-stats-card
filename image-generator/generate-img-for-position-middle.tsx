@@ -24,6 +24,10 @@ export const generateImgForPositionMiddle = async (
           .then(buffer => Buffer.from(buffer).toString('base64')),
         name: 'Capsismyfather',
       }}
+      results={{
+        wins: data.win,
+        losses: data.loss,
+      }}
     />,
     {
       width: 1200,
