@@ -1,17 +1,18 @@
-import { Effect, Ref } from "effect";
+import { Effect, Option, pipe, Ref } from "effect";
 import { riftPipeline } from "./statistics/game-mode/rift-pipeline";
-import { middlePositionPipeline } from "./statistics/position/middle";
+import { middlePositionalPipeline } from "./statistics/position/middle/middle-positional-pipeline";
 import { RiotApiImpl } from "./riot-api/adapter/riot-api";
 import { RiotApi } from "./riot-api/domain/port/riot-api";
 import { StatisticsParamsState } from "./statistics/statistics-params";
 import { meanObject } from "./statistics/operations/mean-object";
-import { generateImgForPositionMiddle } from "./image-generator/generate-img-for-position-middle";
-import { getPaletteColor } from "./image-generator/palette-colors";
+import { getPaletteColor } from "./image-generator/style/palette-colors";
 import { sumObject } from "./statistics/operations/sum-object";
+import { middlePositionalImgGenerator } from "./statistics/position/middle/middle-positional-img-generator";
+import { StyleState } from "./image-generator/style/style-state";
 
 const pipelines = {
   'game-mode/rift': riftPipeline,
-  'position/middle': middlePositionPipeline,
+  'position/middle': middlePositionalPipeline,
 } as const;
 
 const operations = {
@@ -26,7 +27,7 @@ interface GetStatsForAccountParams {
   operations?: {
     [K in keyof typeof operations]?: string[];
   }
-  paletteColor: number;
+  paletteColor: Parameters<typeof getPaletteColor>[0];
 }
 
 const getStatsForAccount = (params: GetStatsForAccountParams) => Effect.Do.pipe(
@@ -58,64 +59,48 @@ const makeStatisticsParamsStates = (params: GetStatsForAccountParams) => Effect.
 
 async function main() {
   const params: GetStatsForAccountParams = {
-    name: "voiture",
-    tag: "CARS",
+    name: "Nangaim",
+    tag: "MGN",
     pipelines: ['game-mode/rift', 'position/middle'],
     operations: {
       mean: ['kp', 'dmg', 'soloKills', 'g@14', 'kda'],
       sum: ['win', 'loss'],
     },
-    paletteColor: 0,
+    paletteColor: 'default',
   }
 
-  const results = await getStatsForAccount(params).pipe(Effect.runPromise);
-
-  if (!params.operations || Object.keys(params.operations).length === 0) return results;
-
-  const [firstResult] = results;
-  if (!firstResult) return results;
-
-  let result = firstResult;
-  for (const [operation, keys] of Object.entries(params.operations)) {
-    if (keys.length === 0) continue;
-    result = {
-      ...result,
-      ...operations[operation as keyof typeof operations](results, keys as (keyof typeof result)[]),
-    }
+  const player = {
+    name: "Nangaim",
+    tag: "MGN",
+    imageUrl: await Bun.file('Capture d’écran 2025-05-28 à 02.51.08.png').arrayBuffer()
+      .then(buffer => Buffer.from(buffer).toString('base64'))
+      .then(base64 => `data:image/png;base64,${base64}`),
   }
 
-  const championsCountMap = new Map<string, number>();
-  for (const res of results) {
-    const championName = res.championName;
-    championsCountMap.set(championName, (championsCountMap.get(championName) || 0) + 1);
-  }
-
-  // championsCountMap.set("Ahri", 12);
-  // championsCountMap.set("Zed", 8);
-  // championsCountMap.set("Lux", 5);
-
-  // const result = {
-  //   kp: 0.5833333333333334,
-  //   dmg: 0.27736517588395043,
-  //   soloKills: 10,
-  //   "g@14": 253,
-  //   kda: 3.5,
-  //   win: 5,
-  //   loss: 7,
-  //   championName: "Ahri",
-  //   __tag: "MiddlePositionalStatistics",
-  // } as const;
-
-  const statsFile = await (
-    result.__tag === 'MiddlePositionalStatistics' ? generateImgForPositionMiddle(result, championsCountMap, { colors: getPaletteColor(params.paletteColor) }) :
-      Promise.resolve()
+  const images = await Effect.Do.pipe(
+    Effect.andThen(getStatsForAccount(params)),
+    Effect.andThen(stats => [
+      middlePositionalImgGenerator(stats, player),
+    ]),
+    Effect.andThen(
+      Effect.forEach(imageOption =>
+        Effect.succeed(Option.getOrUndefined(imageOption))
+      )
+    ),
+    Effect.andThen(images => images.filter(image => image !== undefined)),
+    Effect.andThen(Effect.all),
+    Effect.provideServiceEffect(
+      StyleState,
+      Ref.make({
+        palette: getPaletteColor(params.paletteColor),
+      })
+    ),
+    Effect.runPromise,
   )
 
-  if (statsFile) {
-    await Bun.write("stats.png", statsFile);
+  for (const image of images) {
+    await Bun.write(`output-${params.name}-${params.tag}-${Date.now()}.png`, image);
   }
-
-  return result;
 }
 
 console.log(await main());

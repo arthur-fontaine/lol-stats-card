@@ -1,9 +1,10 @@
-import { Effect, pipe, Ref } from "effect";
-import { StatisticsParamsState } from "../statistics-params";
-import { Skip } from "../skip";
-import { getGoldDifference } from "../utils/get-gold-difference";
+import { Effect, Ref } from "effect";
+import { StatisticsParamsState } from "../../statistics-params";
+import { Skip } from "../../skip";
+import { getGoldDifference } from "../../utils/get-gold-difference";
+import { MiddlePositionalStatistics } from "./middle-positional-statistics";
 
-export const middlePositionPipeline = () => Effect.gen(function* () {
+export const middlePositionalPipeline = () => Effect.gen(function* () {
   const state = yield* StatisticsParamsState;
   const { match, account } = yield* Ref.get(state);
   
@@ -30,15 +31,14 @@ export const middlePositionPipeline = () => Effect.gen(function* () {
   const isWin = yield* Effect.try(() =>
     matchDetails.info.participants.some(p => p.puuid === account.puuid && p.win))
 
-  return {
+  return new MiddlePositionalStatistics({
     kp: playerInMatch.challenges.killParticipation,
     dmg: playerInMatch.challenges.teamDamagePercentage,
     soloKills: playerInMatch.challenges.soloKills,
-    'g@14': goldDifference,
+    "g@14": goldDifference,
     kda: playerInMatch.challenges.kda,
     win: isWin ? 1 : 0,
     loss: isWin ? 0 : 1,
     championName: playerInMatch.championName,
-    __tag: 'MiddlePositionalStatistics' as const,
-  };
+  })
 })
