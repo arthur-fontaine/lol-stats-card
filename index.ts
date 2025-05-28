@@ -6,7 +6,7 @@ import { RiotApi } from "./riot-api/domain/port/riot-api";
 import { StatisticsParamsState } from "./statistics/statistics-params";
 import { meanObject } from "./statistics/operations/mean-object";
 import { generateImgForPositionMiddle } from "./image-generator/generate-img-for-position-middle";
-import { getPaletteColor, paletteColors } from "./image-generator/palette-colors";
+import { getPaletteColor } from "./image-generator/palette-colors";
 
 const pipelines = {
   'game-mode/rift': riftPipeline,
@@ -21,7 +21,9 @@ interface GetStatsForAccountParams {
   name: string;
   tag: string;
   pipelines: (keyof typeof pipelines)[];
-  operations: (keyof typeof operations)[];
+  operations?: {
+    [K in keyof typeof operations]?: string[];
+  }
   paletteColor: number;
 }
 
@@ -36,8 +38,6 @@ const getStatsForAccount = (params: GetStatsForAccountParams) => Effect.Do.pipe(
     ))
   ),
   Effect.andThen((results) => results.filter((result) => result !== undefined)),
-  Effect.andThen((results) =>
-    params.operations.includes('mean') ? operations['mean'](results, ['dmg', 'g@14', 'kda', 'kp', 'soloKills']) : results),
   Effect.provideService(RiotApi, RiotApiImpl({
     regions: ["europe", "euw1"],
     apiKey: process.env.RIOT_API_KEY!
@@ -59,33 +59,35 @@ async function main() {
     name: "Capsismyfather",
     tag: "CAPS",
     pipelines: ['game-mode/rift', 'position/middle'],
-    operations: ['mean'],
+    operations: {
+      mean: ['kp', 'dmg', 'soloKills', 'g@14', 'kda'],
+    },
     paletteColor: 0,
   }
 
-  const results = {
-    "kp": 0.601648,
-    "dmg": 0.269532,
-    "soloKills": 1.333333,
-    "g@14": -179.166667,
-    "kda": 3.636742,
-    "__tag": "MiddlePositionalStatistics" as const,
+  const results = await getStatsForAccount(params).pipe(Effect.runPromise);
+
+  if (!params.operations || Object.keys(params.operations).length === 0) return results;
+  
+  const [firstResult] = results;
+  if (!firstResult) return results;
+
+  let result = firstResult;
+  for (const [operation, keys] of Object.entries(params.operations)) {
+    if (keys.length === 0) continue;
+    result = {
+      ...result,
+      ...operations[operation as keyof typeof operations](results, keys as (keyof typeof result)[]),
+    }
   }
 
-  if ('__tag' in results) {
-    let statsFilePromise: Promise<Buffer>;
-    const style = {
-      colors: getPaletteColor(params.paletteColor)
-    };
-    switch (results.__tag) {
-      case 'MiddlePositionalStatistics': {
-        statsFilePromise = generateImgForPositionMiddle(results, style);
-        break;
-      }
-    }
+  const statsFile = await (
+    result.__tag === 'MiddlePositionalStatistics' ? generateImgForPositionMiddle(result, { colors: getPaletteColor(params.paletteColor) }) :
+    Promise.resolve()
+  )
 
-    const statsFile = await statsFilePromise;
-    await Bun.write("middle-stats.png", statsFile);
+  if (statsFile) {
+    await Bun.write("stats.png", statsFile);
   }
 }
 

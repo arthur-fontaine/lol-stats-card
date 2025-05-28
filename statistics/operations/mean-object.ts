@@ -1,6 +1,6 @@
 export const meanObject = <T extends Record<string, unknown>>(
   data: T[],
-  keys: (keyof { [K in keyof T as T[K] extends number ? K : never]: T[K] })[]
+  keys: (keyof T)[]
 ): T => {
   const [firstItem] = data;
 
