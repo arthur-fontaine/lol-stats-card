@@ -1,6 +1,6 @@
 import type { PaletteColor } from "../palette-colors";
 
-export const Statistics = ({ style, smallData, bigData, player, results }: {
+export const Statistics = ({ style, championsCount, smallData, bigData, player, results }: {
   style: { colors: PaletteColor }
   smallData: Record<string, string>
   bigData: Record<string, string>,
@@ -12,7 +12,12 @@ export const Statistics = ({ style, smallData, bigData, player, results }: {
     imageBase64: string;
     name: string;
   }
+  championsCount: Map<string, number>;
 }) => {
+  const sortedChampions = Array.from(championsCount.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 7)
+
   return (
     <div style={{
       display: 'flex',
@@ -56,7 +61,7 @@ export const Statistics = ({ style, smallData, bigData, player, results }: {
           display: 'flex',
           flex: 1,
         }}>
-          <img src={`data:image/jpeg;base64,${player.imageBase64}`} alt="Player" style={{
+          <img src={`data:image/png;base64,${player.imageBase64}`} alt="Player" style={{
             width: '100%',
             height: 'auto',
             objectFit: 'cover',
@@ -108,7 +113,9 @@ export const Statistics = ({ style, smallData, bigData, player, results }: {
             color: 'white',
             flex: results.wins
           }}>
-            <span style={{ fontSize: '200px', fontWeight: 'bold' }}>{results.wins}</span>
+            {results.wins > 0 &&
+              <span style={{ fontSize: '200px', fontWeight: 'bold' }}>{results.wins}</span>
+            }
           </div>
 
           <div style={{
@@ -119,8 +126,29 @@ export const Statistics = ({ style, smallData, bigData, player, results }: {
             color: 'white',
             flex: results.losses
           }}>
-            <span style={{ fontSize: '200px', fontWeight: 'bold' }}>{results.losses}</span>
+            {results.losses > 0 &&
+              <span style={{ fontSize: '200px', fontWeight: 'bold' }}>{results.losses}</span>
+            }
           </div>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          flex: 1,
+        }}>
+          {/* https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Aatrox_0.jpg */}
+          {sortedChampions.map(([url, count]) => (
+            <img
+              key={url}
+              src={url}
+              style={{
+                flex: count,
+                minHeight: '100%',
+                maxHeight: '100%',
+                objectFit: 'cover',
+              }}
+            />
+          ))}
         </div>
 
       </div>

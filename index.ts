@@ -58,8 +58,8 @@ const makeStatisticsParamsStates = (params: GetStatsForAccountParams) => Effect.
 
 async function main() {
   const params: GetStatsForAccountParams = {
-    name: "Capsismyfather",
-    tag: "CAPS",
+    name: "voiture",
+    tag: "CARS",
     pipelines: ['game-mode/rift', 'position/middle'],
     operations: {
       mean: ['kp', 'dmg', 'soloKills', 'g@14', 'kda'],
@@ -84,6 +84,16 @@ async function main() {
     }
   }
 
+  const championsCountMap = new Map<string, number>();
+  for (const res of results) {
+    const championName = res.championName;
+    championsCountMap.set(championName, (championsCountMap.get(championName) || 0) + 1);
+  }
+
+  // championsCountMap.set("Ahri", 12);
+  // championsCountMap.set("Zed", 8);
+  // championsCountMap.set("Lux", 5);
+
   // const result = {
   //   kp: 0.5833333333333334,
   //   dmg: 0.27736517588395043,
@@ -92,11 +102,12 @@ async function main() {
   //   kda: 3.5,
   //   win: 5,
   //   loss: 7,
+  //   championName: "Ahri",
   //   __tag: "MiddlePositionalStatistics",
   // } as const;
 
   const statsFile = await (
-    result.__tag === 'MiddlePositionalStatistics' ? generateImgForPositionMiddle(result, { colors: getPaletteColor(params.paletteColor) }) :
+    result.__tag === 'MiddlePositionalStatistics' ? generateImgForPositionMiddle(result, championsCountMap, { colors: getPaletteColor(params.paletteColor) }) :
       Promise.resolve()
   )
 

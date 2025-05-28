@@ -4,11 +4,18 @@ import type { Effect } from "effect";
 import sharp from "sharp";
 import type { PaletteColor } from "./palette-colors";
 import { Statistics } from "./components/statistics";
+import { getChampionImageBase64 } from "./utils/get-champion-image-base64";
 
 export const generateImgForPositionMiddle = async (
   data: Effect.Effect.Success<ReturnType<typeof middlePositionPipeline>>,
+  championsCount: Map<string, number>,
   style: { colors: PaletteColor }
 ) => {
+  const championsCountUrl = new Map<string, number>();
+  for (const [champion, count] of championsCount.entries()) {
+    championsCountUrl.set(await getChampionImageBase64(champion), count);
+  }
+
   const svg = await satori(
     <Statistics
       style={style}
@@ -20,10 +27,11 @@ export const generateImgForPositionMiddle = async (
       }}
       bigData={{ kda: data.kda.toLocaleString(undefined, { maximumFractionDigits: 2 }) }}
       player={{
-        imageBase64: await Bun.file('IMG_20250527_111239551.jpg').arrayBuffer()
+        imageBase64: await Bun.file('Capture d’écran 2025-05-28 à 02.51.08.png').arrayBuffer()
           .then(buffer => Buffer.from(buffer).toString('base64')),
-        name: 'Capsismyfather',
+        name: 'Voiture',
       }}
+      championsCount={championsCountUrl}
       results={{
         wins: data.win,
         losses: data.loss,

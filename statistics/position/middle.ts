@@ -38,6 +38,7 @@ export const middlePositionPipeline = () => Effect.gen(function* () {
     kda: playerInMatch.challenges.kda,
     win: isWin ? 1 : 0,
     loss: isWin ? 0 : 1,
+    championName: playerInMatch.championName,
     __tag: 'MiddlePositionalStatistics' as const,
   };
 })
