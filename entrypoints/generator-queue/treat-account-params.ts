@@ -9,4 +9,8 @@ export const TreatAccountParams = Schema.Struct({
   }),
   paletteColor: Schema.Literal(...Object.keys(paletteColors) as (keyof typeof paletteColors)[]),
   pipelines: Schema.Array(Schema.Literal(...Object.keys(pipelines) as (keyof typeof pipelines)[])),
+  dateRange: Schema.Struct({
+    from: Schema.DateFromString,
+    to: Schema.DateFromString,
+  }),
 })

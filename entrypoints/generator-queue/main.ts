@@ -1,4 +1,4 @@
-import { Console, Effect, Option, pipe, Ref, Schema, Stream } from "effect";
+import { Chunk, Console, Effect, Option, pipe, Ref, Schema, Stream } from "effect";
 import fsDriver from "unstorage/drivers/fs";
 import { Storage } from "../../effect-lib/unstorage/domain/port/storage";
 import { StyleState } from "../../image-generator/style/style-state";
@@ -105,7 +105,21 @@ const makeStatisticsParamsStates = (params: typeof TreatAccountParams.Type) =>
 
     const account = yield* riotApi.Account(params.player.tag, params.player.name);
     const player = yield* account.getPlayer();
-    const matches = yield* player.getMatches();
+
+    const { from: startTime, to: endTime } = params.dateRange;
+    const MAX_RANGE_DAYS = 14;
+    if (startTime.getTime() >= endTime.getTime()) {
+      throw new Error("Invalid date range: 'from' date must be before 'to' date.");
+    }
+    if (endTime.getTime() - startTime.getTime() > MAX_RANGE_DAYS * 24 * 60 * 60 * 1000) {
+      throw new Error(`Date range cannot be more than ${MAX_RANGE_DAYS} days`);
+    }
+
+    const matchesChunk = yield* Stream.runCollect(player.iterateMatches({
+      startTime: Math.round(startTime.getTime() / 1000),
+      endTime: Math.round(endTime.getTime() / 1000),
+    }))
+    const matches = Chunk.toArray(matchesChunk);
 
     return matches.map(match => ({ match, account }));
   })

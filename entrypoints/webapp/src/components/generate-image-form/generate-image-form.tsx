@@ -42,6 +42,10 @@ export function GenerateImageForm(props: IGenerateImageFormProps) {
             tag: tagline,
             imageUrl: imageBase64,
           },
+          dateRange: {
+            from: new Date(Date.now() - 1000 * 60 * 60 * 24 * 14).toISOString(), // last 14 days
+            to: new Date().toISOString(), // now
+          },
         },
       })
       if (!response.ok) {
