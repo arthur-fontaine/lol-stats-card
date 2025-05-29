@@ -42,7 +42,7 @@ export const loadFonts = () =>
     return [
       {
         name: 'Special Gothic Condensed One',
-        data: yield* loadAsset('fonts/SpecialGothicCondensedOne-Regular.woff'),
+        data: yield* loadAsset('fonts/SpecialGothicCondensedOne-Regular.woff', 'image-generator/'),
         weight: 500,
         style: 'normal',
       } as const,

@@ -1,5 +1,5 @@
 import { Effect } from "effect";
 
-export const loadAsset = (assetPath: string) =>
+export const loadAsset = (assetPath: string, basePath: string = '') =>
   Effect.tryPromise(() =>
-    Bun.file(`assets/${assetPath}`).arrayBuffer())
+    Bun.file(`${basePath}assets/${assetPath}`).arrayBuffer())
