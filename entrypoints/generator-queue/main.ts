@@ -54,11 +54,8 @@ const treatAccount = (params: typeof TreatAccountParams.Type) =>
     Effect.andThen(stats => [
       middlePositionalImgGenerator(stats, params.player),
     ]),
-    Effect.andThen(
-      Effect.forEach(imageOption =>
-        Effect.succeed(Option.getOrUndefined(imageOption))
-      )
-    ),
+    Effect.andThen(Effect.forEach(imageOption =>
+      Effect.succeed(Option.getOrUndefined(imageOption)))),
     Effect.andThen(images => images.filter(image => image !== undefined)),
     Effect.andThen(Effect.all),
     Effect.provideServiceEffect(

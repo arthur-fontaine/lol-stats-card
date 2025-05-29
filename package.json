@@ -11,8 +11,9 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "arktype": "^2.1.20",
+    "@hono/standard-validator": "^0.1.2",
     "effect": "^3.15.4",
+    "hono": "^4.7.10",
     "ioredis": "^5.6.1",
     "nodejs-polars": "^0.18.0",
     "react": "^19.1.0",
