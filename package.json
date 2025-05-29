@@ -17,6 +17,7 @@
     "nodejs-polars": "^0.18.0",
     "react": "^19.1.0",
     "satori": "^0.13.1",
-    "sharp": "^0.34.2"
+    "sharp": "^0.34.2",
+    "unstorage": "^1.16.0"
   }
 }

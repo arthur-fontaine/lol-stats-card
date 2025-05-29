@@ -1,6 +1,6 @@
 import type { Effect } from "effect";
-import type { RiotMatchGetDetailsResponse } from "../model/schemas/match/get-match-details";
-import type { RiotMatchGetTimelineResponse } from "../model/schemas/match/get-timeline";
+import type { RiotMatchGetDetailsResponse } from "./schemas/match/get-match-details";
+import type { RiotMatchGetTimelineResponse } from "./schemas/match/get-timeline";
 import type { UnknownException } from "effect/Cause";
 import type { ParseError } from "effect/ParseResult";
 import type { RiotApi } from "../port/riot-api";

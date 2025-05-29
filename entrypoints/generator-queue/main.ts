@@ -1,28 +1,38 @@
 import { Effect, Option, pipe, Ref, Schema, Stream } from "effect";
+import fsDriver from "unstorage/drivers/fs";
+import { Storage } from "../../effect-lib/unstorage/domain/port/storage";
 import { StyleState } from "../../image-generator/style/style-state";
 import { paletteColors } from "../../image-generator/style/palette-colors";
 import { middlePositionalImgGenerator } from "../../statistics/position/middle/middle-positional-img-generator";
-import { RiotApiImpl } from "../../effect-lib/riot-api/adapter/riot-api";
-import { RiotApi } from "../../effect-lib/riot-api/domain/port/riot-api";
+import { RiotApiImpl } from "../../riot-api/adapter/riot-api";
+import { RiotApi } from "../../riot-api/domain/port/riot-api";
 import { StatisticsParamsState } from "../../statistics/statistics-params";
 import { pipelines } from "../../options";
 import { Queue } from "../../effect-lib/queue/domain/port/queue";
 import { RedisQueueImpl } from "../../effect-lib/queue/adapter/redis-queue";
+import { UnstorageImpl } from "../../effect-lib/unstorage/adapter/unstorage";
 
 async function main() {
   await pipe(
     Queue,
-    Effect.flatMap(queue =>
-      Stream.runForEach(
+    Effect.flatMap(queue => Stream.runForEach(
+      pipe(
         queue.stream("treat-account"),
-        (params) =>
-          Schema.decodeUnknownOption(TreatAccountParams)(params)
-            .pipe(Effect.flatMap(treatAccount))
+        Schema.decodeUnknownOption(TreatAccountParams),
       ),
-    ),
+      (params) => pipe(
+        Effect.succeed(params),
+        Effect.andThen(treatAccount(params)),
+        Effect.andThen(Effect.forEach(saveImage(params.player))),
+      )
+    )),
     Effect.provideService(
       Queue,
       RedisQueueImpl({ queuePrefix: "queue" }),
+    ),
+    Effect.provideService(
+      Storage,
+      UnstorageImpl({ driver: fsDriver({ base: "./.storage" }) }),
     ),
     Effect.runPromise,
   )
@@ -58,6 +68,15 @@ const treatAccount = (params: typeof TreatAccountParams.Type) =>
       })
     )
   )
+
+const saveImage = (player: { name: string; tag: string; imageUrl: string }) =>
+  (image: Buffer) =>
+    Effect.gen(function* () {
+      const storage = yield* Storage;
+
+      const fileName = `${player.name}-${player.tag}-${Date.now()}.png`;
+      yield* Effect.tryPromise(() => storage.setItem(fileName, image));
+    })
 
 const getStatsForAccount = (params: typeof TreatAccountParams.Type) =>
   Effect.Do.pipe(

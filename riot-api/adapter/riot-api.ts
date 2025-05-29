@@ -1,4 +1,4 @@
-import { fetchEffect } from '../../fetch-effect';
+import { fetchEffect } from '../../effect-lib/fetch-effect';
 import { RiotApi } from '../domain/port/riot-api';
 import { Effect, Schema } from 'effect';
 import { RiotPlayerImpl } from './player';
