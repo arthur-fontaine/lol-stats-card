@@ -49,7 +49,7 @@ function Position({
         onChange={() => onSelect?.(label)}
       />
       <img src={icon} alt={label} className="w-8" />
-      <span className="text-lg font-medium text-white/80 peer-checked:text-white peer-checked:font-semibold">{label}</span>
+      <span className="text-lg font-medium text-white/80 peer-checked:text-white peer-checked:font-semibold capitalize">{label}</span>
     </label>
   );
 }
