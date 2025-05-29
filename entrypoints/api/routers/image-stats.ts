@@ -17,6 +17,7 @@ export const imageStatsRouter = new Hono()
       Queue,
       Effect.andThen(queue =>
         queue.enqueue("treat-account", c.req.valid('json'))),
+      Effect.andThen(() => c.json({})),
       Effect.provideService(
         Queue,
         RedisQueueImpl({ queuePrefix: "queue" }),
