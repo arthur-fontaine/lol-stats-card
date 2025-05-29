@@ -3,7 +3,7 @@ import { ImageStatsCollection } from "./components/image-stats-collection/image-
 
 export function App() {
   return (
-    <div className="bg-background h-svh w-svw flow-root px-4">
+    <div className="bg-background min-h-svh h-auto w-auto flex flex-col px-4 pb-16">
       <div className="flex flex-col items-center container mx-auto my-16 border-4 border-border p-16 bg-white/2">
         <header className="text-center">
           <h1 className="text-title font-display font-bold text-4xl">
@@ -22,10 +22,10 @@ export function App() {
         </header>
 
         <GenerateImageForm />
+      </div>
 
-        <div className="mt-12">
-          <ImageStatsCollection />
-        </div>
+      <div className="mt-12 container mx-auto">
+        <ImageStatsCollection />
       </div>
     </div>
   )
