@@ -1,0 +1,59 @@
+version: '3.8'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./entrypoints/api/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ./entrypoints/api/.storage:/app/.storage
+    depends_on:
+      - redis
+
+  caddy-api:
+    image: caddy:2-alpine
+    ports:
+      - "8080:80" # Changed port to avoid conflict with webapp caddy
+      - "8443:443" # Changed port to avoid conflict with webapp caddy
+    volumes:
+      - ./entrypoints/api/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_api_data:/data
+      - caddy_api_config:/config
+    depends_on:
+      - api
+
+  generator-queue:
+    build:
+      context: .
+      dockerfile: ./entrypoints/generator-queue/Dockerfile
+    environment:
+      RIOT_API_KEY: ${RIOT_API_KEY}
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - redis
+
+  webapp:
+    build:
+      context: .
+      dockerfile: ./entrypoints/webapp/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./entrypoints/webapp/Caddyfile:/etc/caddy/Caddyfile # Added Caddyfile volume for webapp
+      - caddy_webapp_data:/data
+      - caddy_webapp_config:/config
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  caddy_api_data:
+  caddy_api_config:
+  caddy_webapp_data:
+  caddy_webapp_config:

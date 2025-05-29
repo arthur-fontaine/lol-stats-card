@@ -5,3 +5,5 @@ const app = new Hono()
   .route('/image-stats', imageStatsRouter);
 
 export type AppType = typeof app;
+
+export default app;

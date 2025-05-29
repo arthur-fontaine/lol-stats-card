@@ -11,6 +11,7 @@ import { pipelines } from "../../options";
 import { Queue } from "../../effect-lib/queue/domain/port/queue";
 import { RedisQueueImpl } from "../../effect-lib/queue/adapter/redis-queue";
 import { UnstorageImpl } from "../../effect-lib/unstorage/adapter/unstorage";
+import { TreatAccountParams } from "./treat-account-params";
 
 async function main() {
   await pipe(
@@ -37,16 +38,6 @@ async function main() {
     Effect.runPromise,
   )
 }
-
-export const TreatAccountParams = Schema.Struct({
-  player: Schema.Struct({
-    name: Schema.String,
-    tag: Schema.String,
-    imageUrl: Schema.String,
-  }),
-  paletteColor: Schema.Literal(...Object.keys(paletteColors) as (keyof typeof paletteColors)[]),
-  pipelines: Schema.Array(Schema.Literal(...Object.keys(pipelines) as (keyof typeof pipelines)[])),
-})
 
 const treatAccount = (params: typeof TreatAccountParams.Type) =>
   Effect.Do.pipe(

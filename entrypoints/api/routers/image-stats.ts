@@ -5,7 +5,7 @@ import { Storage } from '../../../effect-lib/unstorage/domain/port/storage';
 import { RedisQueueImpl } from '../../../effect-lib/queue/adapter/redis-queue';
 import { Queue } from '../../../effect-lib/queue/domain/port/queue';
 import { sValidator } from '@hono/standard-validator';
-import { TreatAccountParams } from '../../generator-queue/main';
+import { TreatAccountParams } from '../../generator-queue/treat-account-params';
 import { UnstorageImpl } from '../../../effect-lib/unstorage/adapter/unstorage';
 import { paletteColors, pipelines } from '../../../options';
 
