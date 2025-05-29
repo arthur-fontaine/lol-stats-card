@@ -10,14 +10,14 @@ export function App() {
       <div className="flex flex-col items-center container mx-auto my-16 border-4 border-border px-4 py-16 md:px-16 bg-white/2">
         <header className="text-center">
           <h1 className="text-title font-display font-bold text-4xl">
-            LoL Stats
+            LoL Stats Card
           </h1>
 
           <p className="font-light text-white mt-4">
             Generate your own League of Legends statistics card
             <br />
-            <span className="text-accent font-semibold">
-              Select your position and start!
+            <span className="text-accent font-semibold max-w-120 block">
+              Enter your summoner name and picture, select a position, and generate your stats card!
             </span>
           </p>
 
