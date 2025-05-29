@@ -23,7 +23,7 @@ export function PictureInput({ onImageChange }: PictureInputProps) {
 
   return (
     <label
-      className="flex items-center justify-center bg-white/15 border border-accent/20 rounded-lg cursor-pointer hover:bg-white/20 transition-colors px-4 h-10.5"
+      className="flex flex-1 items-center justify-center bg-white/15 border border-accent/20 rounded-lg cursor-pointer hover:bg-white/20 transition-colors px-4 h-10.5 min-h-10.5 max-h-10.5"
     >
       <input
         type="file"

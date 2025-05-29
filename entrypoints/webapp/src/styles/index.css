@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./fonts.css";
+@import "./calendar.css";
 
 @theme {
   --font-sans: 'Spiegel', 'sans-serif';
