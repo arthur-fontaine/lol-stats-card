@@ -1,16 +1,21 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 interface PictureInputProps {
   onImageChange?: (base64: string) => void;
 }
 
 export function PictureInput({ onImageChange }: PictureInputProps) {
+  const [hasImage, setHasImage] = useState(false);
+
   const handleImageChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        if (reader.result) onImageChange?.(reader.result as string);
+        if (reader.result) {
+          onImageChange?.(reader.result as string);
+          setHasImage(true);
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -24,11 +29,13 @@ export function PictureInput({ onImageChange }: PictureInputProps) {
         type="file"
         accept="image/png, image/jpeg"
         onChange={handleImageChange}
-        className="hidden"
+        className="w-0 h-0 opacity-0 absolute cursor-pointer"
         id="image-upload"
         required
       />
-      <span className="text-white/80">Upload Image</span>
+      <span className="text-white/80">
+        {hasImage ? 'Image Selected' : 'Upload Image'}
+      </span>
     </label>
   );
 }
