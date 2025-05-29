@@ -1,8 +1,8 @@
 import { Effect, Option, pipe, Ref } from "effect";
 import { riftPipeline } from "./statistics/game-mode/rift-pipeline";
 import { middlePositionalPipeline } from "./statistics/position/middle/middle-positional-pipeline";
-import { RiotApiImpl } from "./riot-api/adapter/riot-api";
-import { RiotApi } from "./riot-api/domain/port/riot-api";
+import { RiotApiImpl } from "./effect-lib/riot-api/adapter/riot-api";
+import { RiotApi } from "./effect-lib/riot-api/domain/port/riot-api";
 import { StatisticsParamsState } from "./statistics/statistics-params";
 import { meanObject } from "./statistics/operations/mean-object";
 import { getPaletteColor } from "./image-generator/style/palette-colors";
