@@ -14,11 +14,11 @@ export function NameInput(props: NameInputProps) {
         type="text"
         name="summonerName"
         placeholder="Summoner name"
-        className="flex-1"
+        className="flex-1 min-w-0"
         onChange={(e) => props.onSummonerNameChange?.(e.target.value)}
         required
       />
-      <div className="w-px bg-border mx-2" />
+      <div className="w-px bg-border mx-2 shrink-0" />
       <span className={`${tagline.length > 0 ? 'text-black/80' : 'text-black/50'} select-none`}>
         #
       </span>

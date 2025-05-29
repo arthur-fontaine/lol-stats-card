@@ -48,13 +48,13 @@ export function GenerateImageForm() {
   })
 
   return <form
-    className="flex flex-col gap-6"
+    className="flex flex-col gap-6 w-full"
     onSubmit={async (e) => {
       e.preventDefault();
       generateImage();
     }}
   >
-    <div className="flex gap-6">
+    <div className="flex gap-6 md:flex-row flex-col">
       <NameInput
         onSummonerNameChange={setSummonerName}
         onTaglineChange={setTagline}

@@ -11,7 +11,7 @@ interface PositionSelectionProps {
 
 export function PositionSelection({ onChange }: PositionSelectionProps) {
   return (
-    <div className="flex shadow-lg">
+    <div className="flex shadow-lg w-full">
       <Position icon={topIcon} label="top" isDisabled onSelect={onChange} />
       <Position icon={jungleIcon} label="jungle" isDisabled onSelect={onChange} />
       <Position icon={middleIcon} label="mid" isDefault onSelect={onChange} />
@@ -37,7 +37,7 @@ function Position({
   onSelect,
 }: PositionProps) {
   return (
-    <label className="flex items-center gap-2 bg-white/15 has-checked:bg-selected px-4 py-2 first:rounded-l-xl last:rounded-r-xl cursor-pointer not-has-disabled:not-has-checked:hover:bg-white/20 border border-accent/20 border-r-0 last:border-r has-disabled:cursor-not-allowed has-disabled:opacity-50">
+    <label className="flex flex-1 min-w-fit items-center justify-center gap-2 bg-white/15 has-checked:bg-selected px-4 py-2 first:rounded-l-xl last:rounded-r-xl cursor-pointer not-has-disabled:not-has-checked:hover:bg-white/20 border border-accent/20 border-r-0 last:border-r has-disabled:cursor-not-allowed has-disabled:opacity-50">
       <input
         type="radio"
         name="position"
@@ -48,8 +48,8 @@ function Position({
         required
         onChange={() => onSelect?.(label)}
       />
-      <img src={icon} alt={label} className="w-8" />
-      <span className="text-lg font-medium text-white/80 peer-checked:text-white peer-checked:font-semibold capitalize">{label}</span>
+      <img src={icon} alt={label} className="md:w-8 w-6" />
+      <span className="text-lg font-medium text-white/80 peer-checked:text-white peer-checked:font-semibold capitalize hidden md:block">{label}</span>
     </label>
   );
 }
