@@ -4,6 +4,10 @@ import { Storage } from "../../effect-lib/unstorage/domain/port/storage";
 import { StyleState } from "../../image-generator/style/style-state";
 import { paletteColors } from "../../image-generator/style/palette-colors";
 import { middlePositionalImgGenerator } from "../../statistics/position/middle/middle-positional-img-generator";
+import { supportPositionalImgGenerator } from "../../statistics/position/support/support-positional-img-generator";
+import { topPositionalImgGenerator } from "../../statistics/position/top/top-positional-img-generator";
+import { bottomPositionalImgGenerator } from "../../statistics/position/bottom/bottom-positional-img-generator";
+import { junglePositionalImgGenerator } from "../../statistics/position/jungle/jungle-positional-img-generator";
 import { RiotApiImpl } from "../../riot-api/adapter/riot-api";
 import { RiotApi } from "../../riot-api/domain/port/riot-api";
 import { StatisticsParamsState } from "../../statistics/statistics-params";
@@ -44,6 +48,10 @@ const treatAccount = (params: typeof TreatAccountParams.Type) =>
     Effect.andThen(getStatsForAccount(params)),
     Effect.andThen(stats => [
       middlePositionalImgGenerator(stats, params.player),
+      supportPositionalImgGenerator(stats, params.player),
+      topPositionalImgGenerator(stats, params.player),
+      bottomPositionalImgGenerator(stats, params.player),
+      junglePositionalImgGenerator(stats, params.player),
     ]),
     Effect.andThen(Effect.forEach(imageOption =>
       Effect.succeed(Option.getOrUndefined(imageOption)))),
@@ -71,14 +79,19 @@ const getStatsForAccount = (params: typeof TreatAccountParams.Type) =>
   Effect.Do.pipe(
     Effect.flatMap(() => makeStatisticsParamsStates(params)),
     Effect.andThen((allStatisticsParams) =>
-      Effect.forEach(allStatisticsParams, (statisticsParams) => Effect.Do.pipe(
-        Effect.andThen(params.pipelines.includes('game-mode/rift') ? pipelines['game-mode/rift']() : Effect.succeed(undefined)),
-        Effect.andThen(params.pipelines.includes('position/middle') ? pipelines['position/middle']() : Effect.succeed(undefined)),
-        Effect.catchTag("Skip", () => Effect.void),
-        Effect.catchAll((err) => Console.error(`Error processing account ${params.player.name}#${params.player.tag}:`, err)),
-        Effect.provideServiceEffect(StatisticsParamsState, Ref.make(statisticsParams))
-      ))
+      Effect.forEach(allStatisticsParams, (statisticsParams) =>
+        Effect.forEach(
+          (Object.keys(pipelines) as Array<keyof typeof pipelines>).filter((pipelineKey) => params.pipelines.includes(pipelineKey)),
+          (pipelineKey) => Effect.Do.pipe(
+            Effect.andThen(pipelines['game-mode/rift']()),
+            Effect.andThen(pipelines[pipelineKey]()),
+            Effect.catchTag("Skip", () => Effect.void),
+            Effect.catchAll((err) => Console.error(`Error processing account ${params.player.name}#${params.player.tag} for pipeline ${pipelineKey}:`, err)),
+            Effect.provideServiceEffect(StatisticsParamsState, Ref.make(statisticsParams))
+          ))
+      )
     ),
+    Effect.andThen((results) => results.flat()),
     Effect.andThen((results) => results.filter((result) => result !== undefined)),
     Effect.provideService(RiotApi, RiotApiImpl({
       regions: ["europe", "euw1"],

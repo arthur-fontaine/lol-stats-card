@@ -12,11 +12,11 @@ interface PositionSelectionProps {
 export function PositionSelection({ onChange }: PositionSelectionProps) {
   return (
     <div className="flex shadow-lg w-full">
-      <Position icon={topIcon} label="top" isDisabled onSelect={onChange} />
-      <Position icon={jungleIcon} label="jungle" isDisabled onSelect={onChange} />
+      <Position icon={topIcon} label="top" onSelect={onChange} />
+      <Position icon={jungleIcon} label="jungle" onSelect={onChange} />
       <Position icon={middleIcon} label="mid" isDefault onSelect={onChange} />
-      <Position icon={bottomIcon} label="bottom" isDisabled onSelect={onChange} />
-      <Position icon={utilityIcon} label="support" isDisabled onSelect={onChange} />
+      <Position icon={bottomIcon} label="bottom" onSelect={onChange} />
+      <Position icon={utilityIcon} label="support" onSelect={onChange} />
     </div>
   );
 }

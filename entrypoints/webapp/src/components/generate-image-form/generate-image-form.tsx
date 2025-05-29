@@ -30,10 +30,10 @@ export function GenerateImageForm(props: IGenerateImageFormProps) {
         json: {
           pipelines: [
             position === 'mid' ? 'position/middle'
-              : position === 'top' ? 'position/middle'
-                : position === 'jungle' ? 'position/middle'
-                  : position === 'bottom' ? 'position/middle'
-                    : position === 'support' ? 'position/middle'
+              : position === 'top' ? 'position/top'
+                : position === 'jungle' ? 'position/jungle'
+                  : position === 'bottom' ? 'position/bottom'
+                    : position === 'support' ? 'position/support'
                       : position satisfies never,
           ],
           paletteColor: 'default',

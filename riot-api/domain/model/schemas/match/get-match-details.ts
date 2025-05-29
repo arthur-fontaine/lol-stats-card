@@ -4,6 +4,7 @@ export const RiotMatchGetDetailsResponse = Schema.Struct({
   metadata: Schema.Struct({}),
   info: Schema.Struct({
     gameMode: Schema.String,
+    gameDuration: Schema.Number,
     participants: Schema.Array(Schema.Struct({
       puuid: Schema.String,
       role: Schema.String,
@@ -16,6 +17,11 @@ export const RiotMatchGetDetailsResponse = Schema.Struct({
       championName: Schema.String,
       championId: Schema.Number,
       participantId: Schema.Number,
+      totalMinionsKilled: Schema.Number,
+      neutralMinionsKilled: Schema.Number,
+      totalDamageDealtToChampions: Schema.Number,
+      visionScore: Schema.Number,
+      wardsPlaced: Schema.Number,
       challenges: Schema.Struct({
         killParticipation: Schema.Number,
         kda: Schema.Number,
