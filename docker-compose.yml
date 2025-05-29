@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: ./entrypoints/api/Dockerfile
     ports:
-      - "${API_PORT:-3000}:3000"
+      - "${LOL_STATS_CARD_API_PORT:-3000}:3000"
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -18,8 +18,8 @@ services:
   caddy-api:
     image: caddy:2-alpine
     ports:
-      - "${CADDY_API_HTTP_PORT:-8080}:80"
-      - "${CADDY_API_HTTPS_PORT:-8443}:443"
+      - "${LOL_STATS_CARD_CADDY_API_HTTP_PORT:-8080}:80"
+      - "${LOL_STATS_CARD_CADDY_API_HTTPS_PORT:-8443}:443"
     volumes:
       - ./entrypoints/api/Caddyfile:/etc/caddy/Caddyfile
       - caddy_api_data:/data
@@ -46,8 +46,8 @@ services:
       context: .
       dockerfile: ./entrypoints/webapp/Dockerfile
     ports:
-      - "${WEBAPP_HTTP_PORT:-80}:80"
-      - "${WEBAPP_HTTPS_PORT:-443}:443"
+      - "${LOL_STATS_CARD_WEBAPP_HTTP_PORT:-80}:80"
+      - "${LOL_STATS_CARD_WEBAPP_HTTPS_PORT:-443}:443"
     environment:
       VITE_API_URL: ${API_URL:-http://api.hypo-stats-lol2.orb.local/}
     volumes:
@@ -58,7 +58,7 @@ services:
   redis:
     image: redis:alpine
     ports:
-      - "${REDIS_EXT_PORT:-6379}:6379"
+      - "${LOL_STATS_CARD_REDIS_EXT_PORT:-6379}:6379"
 
 volumes:
   caddy_api_data:
