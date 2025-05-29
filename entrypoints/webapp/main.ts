@@ -1,14 +1,24 @@
-import { createServer, defineConfig } from 'vite'
+import { build, createServer, defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
 const config = defineConfig({
-  plugins: [react()],
+  root: __dirname,
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
 })
+
+const args = process.argv.slice(2)
+
+if (args.includes('build')) {
+  await build(config)
+  process.exit(0)
+}
 
 const server = await createServer({
   configFile: false,
-  root: __dirname,
-  server: {},
   ...config,
 })
 

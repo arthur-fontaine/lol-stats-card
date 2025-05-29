@@ -44,9 +44,34 @@ export const imageStatsRouter = new Hono()
         const storage = yield* Storage;
 
         const keys = yield* Effect.tryPromise(() => storage.keys(`${name}-${tag}-`));
-        const results = yield* Effect.tryPromise(() => storage.getItems(keys));
 
-        return c.json(results.map((item) => item.value));
+        return c.json({ images: keys });
+      }),
+      Effect.provideService(
+        Storage,
+        UnstorageImpl({ driver: fsDriver({ base: "./.storage" }) }),
+      ),
+      Effect.runPromise,
+    ),
+  )
+  .get(
+    '/:id',
+    sValidator('param', Schema.standardSchemaV1(Schema.Struct({
+      id: Schema.String,
+    }))),
+    async (c) => pipe(
+      Effect.gen(function* () {
+        const { id } = c.req.valid('param');
+
+        const storage = yield* Storage;
+
+        const item = yield* Effect.tryPromise(() => storage.getItem(id));
+
+        if (!item) return c.notFound();
+        if (typeof item !== 'string') return c.text('Invalid image format', 500);
+
+        const buffer = Buffer.from(item, 'base64');
+        return c.body(buffer)
       }),
       Effect.provideService(
         Storage,

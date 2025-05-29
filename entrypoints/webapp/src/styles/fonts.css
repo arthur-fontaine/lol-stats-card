@@ -1,0 +1,114 @@
+@font-face {
+  font-family: 'Spiegel';
+  src: url('/fonts/Spiegel/Spiegel_TT_Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Spiegel';
+  src: url('/fonts/Spiegel/Spiegel_TT_Regular_Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Spiegel';
+  src: url('/fonts/Spiegel/Spiegel_TT_SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Spiegel';
+  src: url('/fonts/Spiegel/Spiegel_TT_SemiBold_Italic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Spiegel';
+  src: url('/fonts/Spiegel/Spiegel_TT_Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Spiegel';
+  src: url('/fonts/Spiegel/Spiegel_TT_Bold_Italic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* BeaufortForLoL */
+@font-face {
+  font-family: 'BeaufortForLoL';
+  src: url('/fonts/BeaufortForLoL/BeaufortforLOL-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BeaufortForLoL';
+  src: url('/fonts/BeaufortForLoL/BeaufortforLOL-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BeaufortForLoL';
+  src: url('/fonts/BeaufortForLoL/BeaufortforLOL-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BeaufortForLoL';
+  src: url('/fonts/BeaufortForLoL/BeaufortforLOL-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BeaufortForLoL';
+  src: url('/fonts/BeaufortForLoL/BeaufortforLOL-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BeaufortForLoL';
+  src: url('/fonts/BeaufortForLoL/BeaufortforLOL-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BeaufortForLoL';
+  src: url('/fonts/BeaufortForLoL/BeaufortforLOL-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BeaufortForLoL';
+  src: url('/fonts/BeaufortForLoL/BeaufortforLOL-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BeaufortForLoL';
+  src: url('/fonts/BeaufortForLoL/BeaufortforLOL-Heavy.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BeaufortForLoL';
+  src: url('/fonts/BeaufortForLoL/BeaufortforLOL-HeavyItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}

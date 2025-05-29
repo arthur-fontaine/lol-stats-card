@@ -1,0 +1,28 @@
+@import "tailwindcss";
+@import "./fonts.css";
+
+@theme {
+  --font-sans: 'Spiegel', 'sans-serif';
+  --font-display: 'BeaufortForLoL', 'sans-serif';
+
+  --color-lightgold: #EAD69D;
+  --color-darkgold: #C6932B;
+  --color-lightblue: #16AFD6;
+  --color-darkblue: #0A1428;
+
+  --color-background: theme(colors.darkblue);
+  --color-text: #FFFFFF;
+  --color-accent: theme(colors.lightgold);
+  --color-border: theme(colors.lightgold);
+  --color-selected: theme(colors.lightblue);
+}
+
+@layer utilities {
+  .text-title {
+    background-image: linear-gradient(to bottom, var(--color-lightgold), var(--color-darkgold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+}
