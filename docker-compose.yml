@@ -49,7 +49,7 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      VITE_API_URL: http://api.hypo-stats-lol2.orb.local/
+      VITE_API_URL: ${API_URL:-http://api.hypo-stats-lol2.orb.local/}
     volumes:
       - ./entrypoints/webapp/Caddyfile:/etc/caddy/Caddyfile # Added Caddyfile volume for webapp
       - caddy_webapp_data:/data
