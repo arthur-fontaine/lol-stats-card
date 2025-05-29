@@ -7,7 +7,11 @@ interface RedisQueueParams {
 }
 
 export const RedisQueueImpl = (params: RedisQueueParams) => {
-  const client = new Redis()
+  const client = new Redis({
+    host: process.env.REDIS_HOST || "localhost",
+    port: Number(process.env.REDIS_PORT) || 6379,
+    password: process.env.REDIS_PASSWORD,
+  })
 
   return Queue.of({
     enqueue: (key, item) => Effect.sync(() =>

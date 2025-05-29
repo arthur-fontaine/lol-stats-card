@@ -1,4 +1,4 @@
-import { Effect, Option, pipe, Ref, Schema, Stream } from "effect";
+import { Console, Effect, Option, pipe, Ref, Schema, Stream } from "effect";
 import fsDriver from "unstorage/drivers/fs";
 import { Storage } from "../../effect-lib/unstorage/domain/port/storage";
 import { StyleState } from "../../image-generator/style/style-state";
@@ -19,7 +19,7 @@ async function main() {
     Effect.flatMap(queue => Stream.runForEach(
       pipe(
         queue.stream("treat-account"),
-        Schema.decodeUnknownOption(TreatAccountParams),
+        Stream.map(Schema.decodeUnknownSync(TreatAccountParams)),
       ),
       (params) => pipe(
         Effect.succeed(params),
@@ -49,6 +49,7 @@ const treatAccount = (params: typeof TreatAccountParams.Type) =>
       Effect.succeed(Option.getOrUndefined(imageOption)))),
     Effect.andThen(images => images.filter(image => image !== undefined)),
     Effect.andThen(Effect.all),
+    Effect.tap(images => Console.log(`Generated images for ${params.player.name}#${params.player.tag}:`, images)),
     Effect.provideServiceEffect(
       StyleState,
       Ref.make({
@@ -62,7 +63,7 @@ const saveImage = (player: { name: string; tag: string; imageUrl: string }) =>
     Effect.gen(function* () {
       const storage = yield* Storage;
 
-      const fileName = `${player.name}-${player.tag}-${Date.now()}.png`;
+      const fileName = `${player.name}-${player.tag}:${Date.now()}.png`;
       yield* Effect.tryPromise(() => storage.setItem(fileName, image));
     })
 
@@ -73,7 +74,8 @@ const getStatsForAccount = (params: typeof TreatAccountParams.Type) =>
       Effect.forEach(allStatisticsParams, (statisticsParams) => Effect.Do.pipe(
         Effect.andThen(params.pipelines.includes('game-mode/rift') ? pipelines['game-mode/rift']() : Effect.succeed(undefined)),
         Effect.andThen(params.pipelines.includes('position/middle') ? pipelines['position/middle']() : Effect.succeed(undefined)),
-        Effect.catchTag("Skip", () => Effect.succeed(undefined)),
+        Effect.catchTag("Skip", () => Effect.void),
+        Effect.catchAll((err) => Console.error(`Error processing account ${params.player.name}#${params.player.tag}:`, err)),
         Effect.provideServiceEffect(StatisticsParamsState, Ref.make(statisticsParams))
       ))
     ),

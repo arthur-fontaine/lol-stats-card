@@ -1,4 +1,4 @@
-import { Effect, pipe, Schema } from 'effect';
+import { Effect, Option, pipe, Schema } from 'effect';
 import { Hono } from 'hono';
 import fsDriver from 'unstorage/drivers/fs';
 import { Storage } from '../../../effect-lib/unstorage/domain/port/storage';
@@ -43,7 +43,7 @@ export const imageStatsRouter = new Hono()
 
         const storage = yield* Storage;
 
-        const keys = yield* Effect.tryPromise(() => storage.keys(`${name}-${tag}-`));
+        const keys = yield* Effect.tryPromise(() => storage.keys(`${name}-${tag}`));
 
         return c.json({ images: keys });
       }),
@@ -68,9 +68,18 @@ export const imageStatsRouter = new Hono()
         const item = yield* Effect.tryPromise(() => storage.getItem(id));
 
         if (!item) return c.notFound();
-        if (typeof item !== 'string') return c.text('Invalid image format', 500);
 
-        const buffer = Buffer.from(item, 'base64');
+        const bufferSchema = Schema.Struct({
+          type: Schema.Literal('Buffer'),
+          data: Schema.Array(Schema.Number),
+        })
+        const decodedItem = Schema.decodeUnknownOption(bufferSchema)(item);
+
+        const bufferData = Option.getOrUndefined(decodedItem);
+        if (!bufferData) return c.text('Invalid image format', 500);
+
+        const buffer = Buffer.from(bufferData.data);
+
         return c.body(buffer)
       }),
       Effect.provideService(

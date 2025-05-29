@@ -7,9 +7,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      REDIS_URL: redis://redis:6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
     volumes:
-      - ./entrypoints/api/.storage:/app/.storage
+      - ./.storage:/app/.storage
     depends_on:
       - redis
 
@@ -31,7 +33,11 @@ services:
       dockerfile: ./entrypoints/generator-queue/Dockerfile
     environment:
       RIOT_API_KEY: ${RIOT_API_KEY}
-      REDIS_URL: redis://redis:6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    volumes:
+      - ./.storage:/app/.storage
     depends_on:
       - redis
 
