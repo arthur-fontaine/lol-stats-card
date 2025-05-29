@@ -14,6 +14,7 @@ services:
       - ./.storage:/app/.storage
     depends_on:
       - redis
+    restart: on-failure
 
   caddy-api:
     image: caddy:2-alpine
@@ -26,6 +27,7 @@ services:
       - caddy_api_config:/config
     depends_on:
       - api
+    restart: on-failure
 
   generator-queue:
     build:
@@ -40,6 +42,7 @@ services:
       - ./.storage:/app/.storage
     depends_on:
       - redis
+    restart: on-failure
 
   webapp:
     build:
@@ -54,11 +57,13 @@ services:
       - ./entrypoints/webapp/Caddyfile:/etc/caddy/Caddyfile # Added Caddyfile volume for webapp
       - caddy_webapp_data:/data
       - caddy_webapp_config:/config
+    restart: on-failure
 
   redis:
     image: redis:alpine
     ports:
       - "${LOL_STATS_CARD_REDIS_EXT_PORT:-6379}:6379"
+    restart: on-failure
 
 volumes:
   caddy_api_data:
