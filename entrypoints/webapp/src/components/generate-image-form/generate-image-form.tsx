@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { PositionSelection } from "./position-selection";
 import { NameInput } from "./name-input";
@@ -7,7 +7,11 @@ import type { IPosition } from "../../types/position";
 import { PictureInput } from "./picture-input";
 import { summonerNameHistoryStore } from "../../utils/summoner-name-history-store";
 
-export function GenerateImageForm() {
+interface IGenerateImageFormProps {
+  onIsGeneratingImageChange?: (isGenerating: boolean) => void;
+}
+
+export function GenerateImageForm(props: IGenerateImageFormProps) {
   const [position, setPosition] = useState<IPosition>('mid');
   const [summonerName, setSummonerName] = useState<string>('');
   const [tagline, setTagline] = useState<string>('');
@@ -43,6 +47,7 @@ export function GenerateImageForm() {
       if (!response.ok) {
         throw new Error(`Failed to generate image: ${response.statusText}`);
       }
+      props.onIsGeneratingImageChange?.(true);
       summonerNameHistoryStore.add(summonerName, tagline);
     },
   })

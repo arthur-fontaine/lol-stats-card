@@ -1,8 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "../../utils/api-client";
 import { summonerNameHistoryStore } from "../../utils/summoner-name-history-store";
+import { StatsCardPlaceholder } from "./stats-card-placeholder";
+import { useEffect, useRef } from "react";
 
-export function ImageStatsCollection() {
+interface ImageStatsCollectionProps {
+  displayPlaceholder?: boolean;
+  setDisplayPlaceholder?: (display: boolean) => void;
+}
+
+export function ImageStatsCollection(props: ImageStatsCollectionProps) {
   const {
     data: imagePaths = [],
   } = useQuery({
@@ -24,11 +31,24 @@ export function ImageStatsCollection() {
     refetchInterval: 10000,
   });
 
+  const oldImagesLengthRef = useRef<number>(0);
+  useEffect(() => {
+    const currentImagesLength = imagePaths.length;
+    const oldImagesLength = oldImagesLengthRef.current;
+    if (currentImagesLength !== oldImagesLength) {
+      props.setDisplayPlaceholder?.(false);
+    }
+    oldImagesLengthRef.current = currentImagesLength;
+  }, [imagePaths, props.setDisplayPlaceholder]);
+
+  const uniqueImagePaths = Array.from(new Set(imagePaths));
+
   return (
     <div className="flex flex-col gap-6 items-center">
       <h2 className="text-2xl font-bold text-accent">Your Collection</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {imagePaths.map((imagePath) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+        {props.displayPlaceholder && <StatsCardPlaceholder />}
+        {uniqueImagePaths.map((imagePath) => (
           <div key={imagePath.slice(0, 100)} className="rounded-lg shadow-sm">
             <img
               className="w-full h-auto rounded"
@@ -36,7 +56,7 @@ export function ImageStatsCollection() {
             />
           </div>
         ))}
-        {imagePaths.length === 0 && (
+        {uniqueImagePaths.length === 0 && !props.displayPlaceholder && (
           <div className="col-span-full text-center text-gray-500">
             No images found. Start generating your stats!
           </div>

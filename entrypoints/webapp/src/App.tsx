@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { GenerateImageForm } from "./components/generate-image-form/generate-image-form";
 import { ImageStatsCollection } from "./components/image-stats-collection/image-stats-collection";
 
 export function App() {
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+
   return (
     <div className="bg-background min-h-svh h-auto w-auto flex flex-col px-4 pb-16">
       <div className="flex flex-col items-center container mx-auto my-16 border-4 border-border px-4 py-16 md:px-16 bg-white/2">
@@ -21,11 +24,14 @@ export function App() {
           <hr className="my-8 md:my-12 md:-mx-4 border-border" />
         </header>
 
-        <GenerateImageForm />
+        <GenerateImageForm onIsGeneratingImageChange={setIsGeneratingImage} />
       </div>
 
       <div className="md:mt-12 container mx-auto">
-        <ImageStatsCollection />
+        <ImageStatsCollection
+          displayPlaceholder={isGeneratingImage}
+          setDisplayPlaceholder={setIsGeneratingImage}
+        />
       </div>
     </div>
   )
