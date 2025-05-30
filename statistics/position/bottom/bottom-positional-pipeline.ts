@@ -34,7 +34,6 @@ export const bottomPositionalPipeline = () => Effect.gen(function* () {
   const isWin = yield* Effect.try(() =>
     matchDetails.info.participants.some(p => p.puuid === account.puuid && p.win))
 
-  console.log("RETURNED")
   return new BottomPositionalStatistics({
     kp: playerInMatch.challenges.killParticipation,
     dpm,

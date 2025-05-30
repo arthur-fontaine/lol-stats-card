@@ -33,7 +33,6 @@ export const RiotPlayerImpl = (puuid: string) =>
       if (params.count) queryParams.append("count", params.count.toString());
 
       const endpoint = `lol/match/v5/matches/by-puuid/${puuid}/ids?${queryParams.toString()}`;
-      console.log({ endpoint });
       const matchIds = yield* riotApi.makeRequest(endpoint, Schema.Array(Schema.String));
 
       return yield* Effect.forEach(matchIds, riotApi.Match);
@@ -52,7 +51,6 @@ export const RiotPlayerImpl = (puuid: string) =>
           start: count,
           count: 100,
         });
-        console.log(`Fetched ${matches.length} matches for PUUID: ${puuid}, Count: ${count}`);
         if (matches.length === 0) {
           hasMore = false;
         }
