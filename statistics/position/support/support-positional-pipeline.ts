@@ -42,7 +42,7 @@ export const supportPositionalPipeline = () => Effect.gen(function* () {
     return new SupportPositionalStatistics({
     kp: playerInMatch.challenges.killParticipation,
     vspm: visionScorePerMinute,
-    kp14: killParticipationAt14,
+    "kp@14": killParticipationAt14,
     "g@14": goldDifference,
     kda: playerInMatch.challenges.kda,
     win: isWin ? 1 : 0,

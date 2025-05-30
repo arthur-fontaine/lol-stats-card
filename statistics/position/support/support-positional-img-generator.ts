@@ -11,7 +11,7 @@ const formatData = (data: unknown[]) => {
 
   const kp = mean(realData.map(item => item.kp));
   const vspm = mean(realData.map(item => item.vspm));
-  const kp14 = mean(realData.map(item => item.kp14));
+  const kp14 = mean(realData.map(item => item["kp@14"]));
   const goldAt14 = mean(realData.map(item => item["g@14"]));
   const kda = mean(realData.map(item => item.kda));
   const wins = sum(realData.map(item => item.win));
@@ -25,7 +25,7 @@ const formatData = (data: unknown[]) => {
   return Option.some({
     kp,
     vspm,
-    kp14,
+    "kp@14": kp14,
     "g@14": goldAt14,
     kda,
     win: wins,
@@ -46,7 +46,7 @@ export const supportPositionalImgGenerator = (
       quickData: [
         { keyName: 'kp', value: `${(data.kp * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%` },
         { keyName: 'vspm', value: data.vspm.toLocaleString(undefined, { maximumFractionDigits: 1 }) },
-        { keyName: 'kp14', value: `${(data.kp14 * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%` },
+        { keyName: 'kp14', value: `${(data["kp@14"] * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%` },
         { keyName: 'g@14', value: `${data["g@14"] > 0 ? '+' : ''}${data["g@14"].toLocaleString(undefined, { maximumFractionDigits: 1 })}` },
       ],
       wins: data.win,
