@@ -37,7 +37,7 @@ export const junglePositionalPipeline = () => Effect.gen(function* () {
   return new JunglePositionalStatistics({
     kp: playerInMatch.challenges.killParticipation,
     dpm,
-    dmg: playerInMatch.totalDamageDealtToChampions,
+    dmg: playerInMatch.challenges.teamDamagePercentage,
     "g@14": goldDifference,
     kda: playerInMatch.challenges.kda,
     win: isWin ? 1 : 0,
