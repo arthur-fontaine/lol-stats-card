@@ -1,9 +1,12 @@
 import type { Style } from "../style/style-state";
+import type { IPosition } from "../types/position";
+import { PlayerName } from "./player-name";
 
 interface PlayerFrameProps {
   name: string;
   tag: string;
   imageUrl: string;
+  position: IPosition;
   style: Style;
 }
 
@@ -19,17 +22,6 @@ export const PlayerFrame = (props: PlayerFrameProps) =>
       objectFit: 'cover',
     }} />
 
-    <span style={{
-      backgroundColor: props.style.palette.cardColor,
-      color: props.style.palette.textColor,
-      padding: '1rem',
-      position: 'absolute',
-      bottom: '2rem',
-      left: '2rem',
-      fontSize: '60px',
-      textTransform: 'uppercase',
-    }}>
-      {props.name}
-    </span>
+    <PlayerName {...props} />
 
   </div>

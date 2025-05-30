@@ -47,11 +47,11 @@ const treatAccount = (params: typeof TreatAccountParams.Type) =>
   Effect.Do.pipe(
     Effect.andThen(getStatsForAccount(params)),
     Effect.andThen(stats => [
-      middlePositionalImgGenerator(stats, params.player),
-      supportPositionalImgGenerator(stats, params.player),
-      topPositionalImgGenerator(stats, params.player),
-      bottomPositionalImgGenerator(stats, params.player),
-      junglePositionalImgGenerator(stats, params.player),
+      middlePositionalImgGenerator(stats, { ...params.player, position: "mid" }),
+      supportPositionalImgGenerator(stats, { ...params.player, position: "support" }),
+      topPositionalImgGenerator(stats, { ...params.player, position: "top" }),
+      bottomPositionalImgGenerator(stats, { ...params.player, position: "bottom" }),
+      junglePositionalImgGenerator(stats, { ...params.player, position: "jungle" }),
     ]),
     Effect.andThen(Effect.forEach(imageOption =>
       Effect.succeed(Option.getOrUndefined(imageOption)))),
