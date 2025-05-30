@@ -24,5 +24,5 @@ export function getGoldDifference(
   const opponentParticipantFrame = frame.participantFrames[opponentFrame.participantId];
   if (!opponentParticipantFrame) throw new Error(`Opponent participant frame not found for participantId: ${opponentFrame.participantId}`);
 
-  return participantFrame.currentGold - opponentParticipantFrame.currentGold;
+  return participantFrame.totalGold - opponentParticipantFrame.totalGold;
 }

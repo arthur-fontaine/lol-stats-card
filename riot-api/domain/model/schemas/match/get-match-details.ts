@@ -19,6 +19,7 @@ export const RiotMatchGetDetailsResponse = Schema.Struct({
       participantId: Schema.Number,
       totalMinionsKilled: Schema.Number,
       neutralMinionsKilled: Schema.Number,
+      teamId: Schema.Number,
       totalDamageDealtToChampions: Schema.Number,
       visionScore: Schema.Number,
       wardsPlaced: Schema.Number,

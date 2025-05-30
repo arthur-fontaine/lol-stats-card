@@ -46,7 +46,7 @@ export const supportPositionalImgGenerator = (
       quickData: [
         { keyName: 'kp', value: `${(data.kp * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%` },
         { keyName: 'vspm', value: data.vspm.toLocaleString(undefined, { maximumFractionDigits: 1 }) },
-        { keyName: 'kp14', value: `${(data["kp@14"] * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%` },
+        { keyName: 'kp@14', value: `${(data["kp@14"] * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%` },
         { keyName: 'g@14', value: `${data["g@14"] > 0 ? '+' : ''}${data["g@14"].toLocaleString(undefined, { maximumFractionDigits: 1 })}` },
       ],
       wins: data.win,

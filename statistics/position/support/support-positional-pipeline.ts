@@ -34,7 +34,7 @@ export const supportPositionalPipeline = () => Effect.gen(function* () {
     getVisionScorePerMinute(matchDetails, playerInMatch.participantId));
 
   const killParticipationAt14 = yield* Effect.try(() =>
-    getKillParticipationAt14(matchDetails, frameAt14, playerInMatch.participantId));
+    getKillParticipationAt14(matchDetails, matchTimeline.info.frames, playerInMatch.participantId));
   
   const isWin = yield* Effect.try(() =>
     matchDetails.info.participants.some(p => p.puuid === account.puuid && p.win))

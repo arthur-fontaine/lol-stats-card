@@ -46,7 +46,7 @@ export const junglePositionalImgGenerator = (
       quickData: [
         { keyName: 'kp', value: `${(data.kp * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%` },
         { keyName: 'dpm', value: data.dpm.toLocaleString(undefined, { maximumFractionDigits: 0 }) },
-        { keyName: 'dmg', value: data.dmg.toLocaleString(undefined, { maximumFractionDigits: 0 }) },
+        { keyName: 'dmg', value: `${(data.dmg * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%` },
         { keyName: 'g@14', value: `${data["g@14"] > 0 ? '+' : ''}${data["g@14"].toLocaleString(undefined, { maximumFractionDigits: 1 })}` },
       ],
       wins: data.win,
